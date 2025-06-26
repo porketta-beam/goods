@@ -61,7 +61,11 @@ export const LampContainer = ({
         <img 
           src="/bear.png" 
           alt="Bear" 
-          className="w-full h-full object-cover object-center"
+          className="w-full h-full object-cover object-center" // 이미지를 컨테이너에 맞게 크기 조절
+                                                              // w-full: 너비를 100%로 설정
+                                                              // h-full: 높이를 100%로 설정  
+                                                              // object-cover: 이미지 비율을 유지하면서 컨테이너를 꽉 채움
+                                                              // object-center: 이미지를 중앙 정렬
         />
       </motion.div>
 
