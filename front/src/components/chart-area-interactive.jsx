@@ -121,6 +121,12 @@ const chartData = [
   { date: "2024-06-30", desktop: 446, mobile: 400 },
 ]
 
+
+// 차트 설정 객체
+// - visitors: 전체 방문자 수를 표시하는 라인의 설정
+// - desktop: 데스크톱 방문자 수를 표시하는 라인의 설정 (primary 색상 사용)
+// - mobile: 모바일 방문자 수를 표시하는 라인의 설정 (primary 색상 사용)
+// ChartAreaInteractive 컴포넌트에서 차트를 그릴 때 사용됨
 const chartConfig = {
   visitors: {
     label: "Visitors",
@@ -163,14 +169,16 @@ export function ChartAreaInteractive() {
 
   return (
     <Card className="@container/card">
+      {/* 카드 헤더 */}
       <CardHeader>
-        <CardTitle>Total Visitors</CardTitle>
+        <CardTitle>주가 시뮬레이션</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            Total for the last 3 months
+            최근 3개월 기준
           </span>
-          <span className="@[540px]/card:hidden">Last 3 months</span>
+          <span className="@[540px]/card:hidden">최근 3개월 기준</span>
         </CardDescription>
+
         <CardAction>
           <ToggleGroup
             type="single"
@@ -178,10 +186,11 @@ export function ChartAreaInteractive() {
             onValueChange={setTimeRange}
             variant="outline"
             className="hidden *:data-[slot=toggle-group-item]:!px-4 @[767px]/card:flex">
-            <ToggleGroupItem value="90d">Last 3 months</ToggleGroupItem>
-            <ToggleGroupItem value="30d">Last 30 days</ToggleGroupItem>
-            <ToggleGroupItem value="7d">Last 7 days</ToggleGroupItem>
+            <ToggleGroupItem value="90d">최근 3개월 기준</ToggleGroupItem>
+            <ToggleGroupItem value="30d">최근 30일 기준</ToggleGroupItem>
+            <ToggleGroupItem value="7d">최근 7일 기준</ToggleGroupItem>
           </ToggleGroup>
+
           <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger
               className="flex w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"
@@ -203,6 +212,8 @@ export function ChartAreaInteractive() {
           </Select>
         </CardAction>
       </CardHeader>
+
+      {/* 차트 영역 */}
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
           <AreaChart data={filteredData}>
