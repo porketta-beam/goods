@@ -3,8 +3,12 @@ import React from "react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function LampDemo() {
+  const router = useRouter();
+
+
   return (
     <LampContainer>
       <motion.h1
@@ -18,7 +22,7 @@ export default function LampDemo() {
         className="mt-8 bg-gradient-to-br from-slate-300 to-slate-500 py-4 bg-clip-text text-center text-4xl font-medium tracking-tight text-transparent md:text-7xl">
         Bear Guard <br />
         <button 
-          onClick={() => window.location.href = '/dashboard'} 
+          onClick={() => router.push('/dashboard')} 
           className="p-[3px] mt-4 relative">
           <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500" />
           <div className="px-8 py-2  bg-black   relative group transition duration-200 text-white hover:bg-transparent text-sm font-semibold tracking-widest">

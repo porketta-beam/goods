@@ -31,7 +31,7 @@ export default function Page() {
                                 <ChartAreaInteractive />
                             </div>
                             <div className="flex-[2] h-full">
-                                <div>AI 에이전트 들어가는 곳</div>
+                                <div> 안녕하세요</div>
                             </div>
                         </div>
                         {/* <DataTable data={data} /> */}
