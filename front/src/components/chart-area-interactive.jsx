@@ -1,7 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { BarChart, Bar, ResponsiveContainer } from "recharts"
+import { LineChart as RechartsLineChart, Line, ResponsiveContainer as RechartsResponsiveContainer } from "recharts"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import {
@@ -27,99 +29,9 @@ import {
 
 export const description = "An interactive area chart"
 
-const chartData = [
-  { date: "2024-04-01", desktop: 222, mobile: 150 },
-  { date: "2024-04-02", desktop: 97, mobile: 180 },
-  { date: "2024-04-03", desktop: 167, mobile: 120 },
-  { date: "2024-04-04", desktop: 242, mobile: 260 },
-  { date: "2024-04-05", desktop: 373, mobile: 290 },
-  { date: "2024-04-06", desktop: 301, mobile: 340 },
-  { date: "2024-04-07", desktop: 245, mobile: 180 },
-  { date: "2024-04-08", desktop: 409, mobile: 320 },
-  { date: "2024-04-09", desktop: 59, mobile: 110 },
-  { date: "2024-04-10", desktop: 261, mobile: 190 },
-  { date: "2024-04-11", desktop: 327, mobile: 350 },
-  { date: "2024-04-12", desktop: 292, mobile: 210 },
-  { date: "2024-04-13", desktop: 342, mobile: 380 },
-  { date: "2024-04-14", desktop: 137, mobile: 220 },
-  { date: "2024-04-15", desktop: 120, mobile: 170 },
-  { date: "2024-04-16", desktop: 138, mobile: 190 },
-  { date: "2024-04-17", desktop: 446, mobile: 360 },
-  { date: "2024-04-18", desktop: 364, mobile: 410 },
-  { date: "2024-04-19", desktop: 243, mobile: 180 },
-  { date: "2024-04-20", desktop: 89, mobile: 150 },
-  { date: "2024-04-21", desktop: 137, mobile: 200 },
-  { date: "2024-04-22", desktop: 224, mobile: 170 },
-  { date: "2024-04-23", desktop: 138, mobile: 230 },
-  { date: "2024-04-24", desktop: 387, mobile: 290 },
-  { date: "2024-04-25", desktop: 215, mobile: 250 },
-  { date: "2024-04-26", desktop: 75, mobile: 130 },
-  { date: "2024-04-27", desktop: 383, mobile: 420 },
-  { date: "2024-04-28", desktop: 122, mobile: 180 },
-  { date: "2024-04-29", desktop: 315, mobile: 240 },
-  { date: "2024-04-30", desktop: 454, mobile: 380 },
-  { date: "2024-05-01", desktop: 165, mobile: 220 },
-  { date: "2024-05-02", desktop: 293, mobile: 310 },
-  { date: "2024-05-03", desktop: 247, mobile: 190 },
-  { date: "2024-05-04", desktop: 385, mobile: 420 },
-  { date: "2024-05-05", desktop: 481, mobile: 390 },
-  { date: "2024-05-06", desktop: 498, mobile: 520 },
-  { date: "2024-05-07", desktop: 388, mobile: 300 },
-  { date: "2024-05-08", desktop: 149, mobile: 210 },
-  { date: "2024-05-09", desktop: 227, mobile: 180 },
-  { date: "2024-05-10", desktop: 293, mobile: 330 },
-  { date: "2024-05-11", desktop: 335, mobile: 270 },
-  { date: "2024-05-12", desktop: 197, mobile: 240 },
-  { date: "2024-05-13", desktop: 197, mobile: 160 },
-  { date: "2024-05-14", desktop: 448, mobile: 490 },
-  { date: "2024-05-15", desktop: 473, mobile: 380 },
-  { date: "2024-05-16", desktop: 338, mobile: 400 },
-  { date: "2024-05-17", desktop: 499, mobile: 420 },
-  { date: "2024-05-18", desktop: 315, mobile: 350 },
-  { date: "2024-05-19", desktop: 235, mobile: 180 },
-  { date: "2024-05-20", desktop: 177, mobile: 230 },
-  { date: "2024-05-21", desktop: 82, mobile: 140 },
-  { date: "2024-05-22", desktop: 81, mobile: 120 },
-  { date: "2024-05-23", desktop: 252, mobile: 290 },
-  { date: "2024-05-24", desktop: 294, mobile: 220 },
-  { date: "2024-05-25", desktop: 201, mobile: 250 },
-  { date: "2024-05-26", desktop: 213, mobile: 170 },
-  { date: "2024-05-27", desktop: 420, mobile: 460 },
-  { date: "2024-05-28", desktop: 233, mobile: 190 },
-  { date: "2024-05-29", desktop: 78, mobile: 130 },
-  { date: "2024-05-30", desktop: 340, mobile: 280 },
-  { date: "2024-05-31", desktop: 178, mobile: 230 },
-  { date: "2024-06-01", desktop: 178, mobile: 200 },
-  { date: "2024-06-02", desktop: 470, mobile: 410 },
-  { date: "2024-06-03", desktop: 103, mobile: 160 },
-  { date: "2024-06-04", desktop: 439, mobile: 380 },
-  { date: "2024-06-05", desktop: 88, mobile: 140 },
-  { date: "2024-06-06", desktop: 294, mobile: 250 },
-  { date: "2024-06-07", desktop: 323, mobile: 370 },
-  { date: "2024-06-08", desktop: 385, mobile: 320 },
-  { date: "2024-06-09", desktop: 438, mobile: 480 },
-  { date: "2024-06-10", desktop: 155, mobile: 200 },
-  { date: "2024-06-11", desktop: 92, mobile: 150 },
-  { date: "2024-06-12", desktop: 492, mobile: 420 },
-  { date: "2024-06-13", desktop: 81, mobile: 130 },
-  { date: "2024-06-14", desktop: 426, mobile: 380 },
-  { date: "2024-06-15", desktop: 307, mobile: 350 },
-  { date: "2024-06-16", desktop: 371, mobile: 310 },
-  { date: "2024-06-17", desktop: 475, mobile: 520 },
-  { date: "2024-06-18", desktop: 107, mobile: 170 },
-  { date: "2024-06-19", desktop: 341, mobile: 290 },
-  { date: "2024-06-20", desktop: 408, mobile: 450 },
-  { date: "2024-06-21", desktop: 169, mobile: 210 },
-  { date: "2024-06-22", desktop: 317, mobile: 270 },
-  { date: "2024-06-23", desktop: 480, mobile: 530 },
-  { date: "2024-06-24", desktop: 132, mobile: 180 },
-  { date: "2024-06-25", desktop: 141, mobile: 190 },
-  { date: "2024-06-26", desktop: 434, mobile: 380 },
-  { date: "2024-06-27", desktop: 448, mobile: 490 },
-  { date: "2024-06-28", desktop: 149, mobile: 200 },
-  { date: "2024-06-29", desktop: 103, mobile: 160 },
-  { date: "2024-06-30", desktop: 446, mobile: 400 },
-]
+// 차트 데이터에 더미데이터로 넣어놨음
+import chartData from "@/data/monte_result.json"
+import lastPriceList from "@/data/last_price_list.json"
 
 
 // 차트 설정 객체
@@ -143,6 +55,49 @@ const chartConfig = {
   }
 }
 
+// last_price_list의 분포를 히스토그램 데이터로 변환
+function getHistogramData(data, binCount = 20) {
+  if (!data || data.length === 0) return [];
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const binSize = (max - min) / binCount;
+  const bins = Array.from({ length: binCount }, (_, i) => ({
+    bin: min + i * binSize,
+    count: 0,
+    binCenter: min + (i + 0.5) * binSize,
+  }));
+  data.forEach((value) => {
+    let idx = Math.floor((value - min) / binSize);
+    if (idx === binCount) idx = binCount - 1; // max값 포함
+    bins[idx].count += 1;
+  });
+  return bins.map((b, i) => ({
+    bin: `${b.bin.toFixed(0)}~${(b.bin + binSize).toFixed(0)}`,
+    count: b.count,
+    binCenter: b.binCenter,
+  }));
+}
+const histogramData = getHistogramData(lastPriceList, 30);
+
+// lastPriceList의 평균, 표준편차로 정규분포 곡선 데이터 생성
+function getNormalCurveData(data, bins) {
+  if (!data || data.length === 0) return [];
+  const mean = data.reduce((a, b) => a + b, 0) / data.length;
+  const std = Math.sqrt(data.reduce((a, b) => a + (b - mean) ** 2, 0) / data.length);
+  // 히스토그램의 binCenter 기준으로 정규분포 확률밀도 계산
+  const total = data.length;
+  return bins.map((b) => {
+    const x = b.binCenter;
+    const y = (1 / (std * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * ((x - mean) / std) ** 2);
+    // y값을 히스토그램 스케일에 맞게 조정 (최대값 기준)
+    return {
+      bin: b.bin,
+      norm: y * total * (bins[1].binCenter - bins[0].binCenter),
+    };
+  });
+}
+const normalCurveData = getNormalCurveData(lastPriceList, histogramData);
+
 export function ChartAreaInteractive() {
   const isMobile = useIsMobile()
   const [timeRange, setTimeRange] = React.useState("90d")
@@ -153,33 +108,52 @@ export function ChartAreaInteractive() {
     }
   }, [isMobile])
 
+  // 날짜 필터링 (date가 0~60인 경우만)
   const filteredData = chartData.filter((item) => {
-    const date = new Date(item.date)
-    const referenceDate = new Date("2024-06-30")
-    let daysToSubtract = 90
-    if (timeRange === "30d") {
-      daysToSubtract = 30
-    } else if (timeRange === "7d") {
-      daysToSubtract = 7
-    }
-    const startDate = new Date(referenceDate)
-    startDate.setDate(startDate.getDate() - daysToSubtract)
-    return date >= startDate
+    const dateNum = typeof item.date === 'number' ? item.date : parseInt(item.date, 10);
+    return dateNum >= 0 && dateNum <= 60;
   })
 
+  // 시뮬레이션 key 자동 추출 (sim1, sim2, ...)
+  const simKeys = chartData.length > 0 ? Object.keys(chartData[0]).filter(key => key.startsWith("sim")) : [];
+
+  // 구별 가능한 색상 팔레트 (최대 10개, 그 이상은 반복)
+  const colorPalette = [
+    "#1f77b4", // 파랑
+    "#ff7f0e", // 주황
+    "#2ca02c", // 초록
+    "#d62728", // 빨강
+    "#9467bd", // 보라
+    "#8c564b", // 갈색
+    "#e377c2", // 핑크
+    "#7f7f7f", // 회색
+    "#bcbd22", // 연두
+    "#17becf"  // 청록
+  ];
+
+  // y축 min/max 계산 (filteredData의 모든 sim 값 중 최소/최대)
+  const yMin = filteredData.length > 0 ? Math.min(...filteredData.flatMap(item => simKeys.map(k => item[k])).filter(v => typeof v === 'number')) : 0;
+  const yMax = filteredData.length > 0 ? Math.max(...filteredData.flatMap(item => simKeys.map(k => item[k])).filter(v => typeof v === 'number')) : 1;
+
+  // --- 디버깅용 로그 ---
+  console.log("[chart-area-interactive] chartData:", chartData)
+  console.log("[chart-area-interactive] simKeys:", simKeys)
+  console.log("[chart-area-interactive] filteredData:", filteredData)
+  // -------------------
+
   return (
-    <Card className="@container/card">
+    <Card className="@container/card h-full">
       {/* 카드 헤더 */}
       <CardHeader>
-        <CardTitle>주가 시뮬레이션</CardTitle>
+        <CardTitle>몬테카를로 시뮬레이션 결과</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            최근 3개월 기준
+            30회 시뮬레이션, 60일 예측 결과
           </span>
-          <span className="@[540px]/card:hidden">최근 3개월 기준</span>
+          <span className="@[540px]/card:hidden">30회 시뮬레이션, 60일 예측 결과</span>
         </CardDescription>
 
-        <CardAction>
+        {/* <CardAction>
           <ToggleGroup
             type="single"
             value={timeRange}
@@ -210,64 +184,56 @@ export function ChartAreaInteractive() {
               </SelectItem>
             </SelectContent>
           </Select>
-        </CardAction>
+        </CardAction> */}
       </CardHeader>
 
-      {/* 차트 영역 */}
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
-          <AreaChart data={filteredData}>
-            <defs>
-              <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--color-desktop)" stopOpacity={1.0} />
-                <stop offset="95%" stopColor="var(--color-desktop)" stopOpacity={0.1} />
-              </linearGradient>
-              <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--color-mobile)" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="var(--color-mobile)" stopOpacity={0.1} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="date"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              minTickGap={32}
-              tickFormatter={(value) => {
-                const date = new Date(value)
-                return date.toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                });
-              }} />
-            <ChartTooltip
-              cursor={false}
-              defaultIndex={isMobile ? -1 : 10}
-              content={
-                <ChartTooltipContent
-                  labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    });
-                  }}
-                  indicator="dot" />
-              } />
-            <Area
-              dataKey="mobile"
-              type="natural"
-              fill="url(#fillMobile)"
-              stroke="var(--color-mobile)"
-              stackId="a" />
-            <Area
-              dataKey="desktop"
-              type="natural"
-              fill="url(#fillDesktop)"
-              stroke="var(--color-desktop)"
-              stackId="a" />
-          </AreaChart>
-        </ChartContainer>
+      {/* 차트 영역 3:2 분할 */}
+      <CardContent className="px-0 pt-0 sm:px-0 sm:pt-2 h-full">
+        <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+          {/* 왼쪽: LineChart (3/5) */}
+          <div style={{ flex: 3, minWidth: 0, margin: 0, padding: 0, display: 'flex', alignItems: 'center' }}>
+            <ChartContainer config={chartConfig} className="h-full w-full">
+              <AreaChart data={filteredData} height={250} width={undefined}>
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="date"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  minTickGap={32}
+                  tick={false}
+                />
+                <YAxis domain={[yMin, yMax]} tickLine={false} axisLine={false} width={60} tick={false} />
+                {simKeys.map((key, idx) => (
+                  <Area
+                    key={key}
+                    dataKey={key}
+                    type="natural"
+                    fill="none"
+                    stroke={colorPalette[idx % colorPalette.length]}
+                    strokeWidth={1}
+                    opacity={0.7}
+                    dot={false}
+                    stackId={undefined}
+                    activeDot={false}
+                  />
+                ))}
+              </AreaChart>
+            </ChartContainer>
+          </div>
+          {/* 오른쪽: last_price_list 분포 BarChart (2/5) */}
+          <div style={{ flex: 2, minWidth: 0, margin: 0, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <ResponsiveContainer width="100%" >
+              <BarChart data={histogramData} layout="vertical">
+                <XAxis type="number" hide />
+                <YAxis dataKey="bin" type="category" width={60} tick={false} axisLine={false} tickLine={false} reversed />
+                <Bar dataKey="count" fill="#8884d8" />
+                {/* 정규분포 곡선 라인 */}
+                <Line type="monotone" dataKey="norm" data={normalCurveData} stroke="#d62728" dot={false} strokeWidth={2} activeDot={false} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
