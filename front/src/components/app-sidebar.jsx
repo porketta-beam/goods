@@ -35,20 +35,15 @@ import {
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "김하늘",
+    email: "haneul0620@naver.com",
+    avatar: "/duck.png",
   },
   navMain: [
     {
       title: "Dashboard",
       url: "#",
       icon: IconDashboard,
-    },
-    {
-      title: "Lifecycle",
-      url: "#",
-      icon: IconListDetails,
     },
     {
       title: "Analytics",
@@ -156,16 +151,16 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
-              <a href="#">
-                <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+          <SidebarMenu>
+              <SidebarMenuItem>
+                  <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
+                    <a href="#">
+                      <img src="/goose.png" className="!size-5" alt="goose" />
+                      <span className="text-base font-semibold">Good`s</span>
+                    </a>
+                  </SidebarMenuButton>
+              </SidebarMenuItem>
+          </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
