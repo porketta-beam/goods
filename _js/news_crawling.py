@@ -39,12 +39,23 @@ def fetch_news_from_webhook(query: str, date: str, news_office_checked: str) -> 
 
 
 
-# 시작 날짜 설정 (2025.06.30)
-current_date = datetime(2025, 6, 30)
+# CLI에서 날짜 입력받기 (YYYY-MM-DD 형식)
+date_input = input("시작 날짜를 입력하세요 (YYYY-MM-DD 형식): ")
+current_date = datetime.strptime(date_input, "%Y-%m-%d")
 
-# 검색어와 뉴스사 리스트 설정
-query = "사기"
-news_offices = ["1025", "1020"] # 중앙일보, 동아일보
+# CLI에서 검색어 입력받기
+query = input("검색어를 입력하세요: ")
+
+# CLI에서 뉴스사 리스트 입력받기 (쉼표로 구분)
+print("뉴스사 ID 목록:")
+print("1023: 조선일보")
+print("1025: 중앙일보") 
+print("1020: 동아일보")
+print("1015: 한국경제")
+print("1009: 매일경제")
+print("1011: 서울경제")
+news_offices_input = input("수집할 뉴스사 ID를 쉼표로 구분하여 입력하세요: ")
+news_offices = [office.strip() for office in news_offices_input.split(",")]
 
 # 과거로 이동하면서 데이터 수집
 while current_date.year >= 2025:  # 2025년까지 수집
