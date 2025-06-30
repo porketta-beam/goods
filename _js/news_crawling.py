@@ -21,7 +21,7 @@ def fetch_news_from_webhook(query: str, date: str, news_office_checked: str) -> 
           sucess : 성공했거나 이미 중복 데이터거나
           retry : 실패 > 재시도
     """
-    url = "https://moluvalu.app.n8n.cloud/webhook/3fc6b155-45d8-42cb-b54b-c81bd87ac445"
+    url = "https://moluvalu.app.n8n.cloud/webhook/3fc6b155-45d8-42cb-b54b-c81bd87ac446"
     params = {
         "query": query,
         "date": date,
