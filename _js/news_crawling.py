@@ -38,7 +38,6 @@ def fetch_news_from_webhook(query: str, date: str, news_office_checked: str) -> 
 
 
 
-
 # CLI에서 날짜 입력받기 (YYYY-MM-DD 형식)
 date_input = input("시작 날짜를 입력하세요 (YYYY-MM-DD 형식): ")
 current_date = datetime.strptime(date_input, "%Y-%m-%d")
@@ -91,7 +90,7 @@ while current_date.year >= 2025:  # 2025년까지 수집
         print(f"{date_str} {news_office} 결과: {result}")
         
         # API 호출 간 간격 두기 
-        time.sleep(1)
+        time.sleep(2)
     
     # 하루 전으로 이동
     current_date -= timedelta(days=1)
