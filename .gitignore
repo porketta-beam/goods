@@ -1,0 +1,74 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.pyo
+*.pyd
+*.pdb
+*.pyc
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# 환경설정 및 민감정보
+.env
+.env.*
+*.env
+
+# 데이터/결과/로그 파일
+*.log
+*.csv
+*.tsv
+*.xls
+*.xlsx
+*.json
+*.xml
+*.db
+*.sqlite3
+*.sqlite
+*.h5
+*.hdf5
+*.parquet
+*.feather
+*.sav
+*.rdata
+*.rds
+*.pkl
+*.pickle
+*.joblib
+*.npz
+*.npy
+
+# 캐시/임시파일
+.cache/
+*.cache
+*.tmp
+*.temp
+~$*
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
+
+# node.js
+node_modules/
+
+# OS별 임시파일
+Icon?
+._*
+
+# 기타
+*.bak
+*.swp
+*.swo
+*.orig
+*.rej
+
+# Archive, 백업, 임시폴더 예시
+Archive/ 
