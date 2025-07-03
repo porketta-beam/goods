@@ -3,10 +3,10 @@ from datetime import datetime, timedelta
 import time
 
 risk_keywords = [
-    "사기",
-    "횡령",
-    "배임", 
-    "분식회계",
+    "사기", # 하늘 컴1 
+    "횡령", # 정수 컴1
+    "배임", # 하늘 컴2
+    "분식회계", # 하늘 컴3
     "내부자 거래",
     "주가조작",
     "세금 탈루",
