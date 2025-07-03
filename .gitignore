@@ -26,7 +26,6 @@ build/
 *.tsv
 *.xls
 *.xlsx
-*.json
 *.xml
 *.db
 *.sqlite3

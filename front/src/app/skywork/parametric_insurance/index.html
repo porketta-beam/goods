@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>파라메트릭 보험 몬테카를로 시뮬레이션</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            bg: '#0f1419',
+                            surface: '#1a1f2e',
+                            elevated: '#252b3a',
+                            border: '#334155',
+                            divider: '#1e293b'
+                        },
+                        text: {
+                            primary: '#e2e8f0',
+                            secondary: '#94a3b8',
+                            muted: '#64748b'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans KR', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="dark bg-dark-bg text-text-primary min-h-screen font-sans">
+    <!-- 로딩 화면 -->
+    <div id="loading-screen" class="fixed inset-0 bg-dark-bg z-50 flex items-center justify-center">
+        <div class="text-center">
+            <div class="loading-spinner mb-6"></div>
+            <h2 class="text-2xl font-bold text-text-primary mb-2">파라메트릭 보험 시뮬레이션</h2>
+            <p class="text-text-secondary">애플리케이션을 초기화하고 있습니다...</p>
+        </div>
+    </div>
+
+    <!-- 헤더 -->
+    <header class="bg-dark-surface border-b border-dark-border shadow-2xl">
+        <div class="container mx-auto px-6 py-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                        파라메트릭 보험 시뮬레이션
+                    </h1>
+                    <p class="text-text-secondary mt-3 text-lg">
+                        주가 하락 리스크와 보험 효과성을 분석하는 전문 도구
+                    </p>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <div class="bg-dark-elevated px-4 py-2 rounded-lg border border-dark-border">
+                        <span class="text-sm text-text-muted">버전</span>
+                        <span class="text-sm font-medium text-text-primary ml-2">2.1</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 메인 컨테이너 -->
+    <div class="container mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
+            <!-- 시뮬레이션 파라미터 입력 패널 -->
+            <div class="xl:col-span-1">
+                <div class="bg-dark-surface rounded-xl shadow-2xl border border-dark-border overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4">
+                        <h2 class="text-xl font-semibold text-white">시뮬레이션 설정</h2>
+                    </div>
+                    
+                    <form id="simulation-form" class="p-6 space-y-6">
+                        <!-- 주가 정보 -->
+                        <div class="form-section">
+                            <h3 class="text-lg font-semibold text-text-primary mb-4 flex items-center">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                                주가 정보
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="input-group">
+                                    <label class="block text-sm font-medium text-text-secondary mb-2">초기 주가 (원)</label>
+                                    <input type="number" id="initial-price" value="100000" min="1000" step="1000" 
+                                           class="input-field">
+                                </div>
+                                <div class="input-group">
+                                    <label class="block text-sm font-medium text-text-secondary mb-2">변동성 (%)</label>
+                                    <input type="number" id="volatility" value="25" min="1" max="100" step="1" 
+                                           class="input-field">
+                                </div>
+                                <div class="input-group">
+                                    <label class="block text-sm font-medium text-text-secondary mb-2">드리프트 (%)</label>
+                                    <input type="number" id="drift" value="5" min="-50" max="50" step="0.1" 
+                                           class="input-field">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 시뮬레이션 설정 -->
+                        <div class="form-section">
+                            <h3 class="text-lg font-semibold text-text-primary mb-4 flex items-center">
+                                <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                                시뮬레이션 설정
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="input-group">
+                                    <label class="block text-sm font-medium text-text-secondary mb-2">시뮬레이션 기간 (일)</label>
+                                    <input type="number" id="time-horizon" value="252" min="1" max="1000" step="1" 
+                                           class="input-field">
+                                </div>
+                                <div class="input-group">
+                                    <label class="block text-sm font-medium text-text-secondary mb-2">시뮬레이션 횟수</label>
+                                    <input type="number" id="num-simulations" value="10000" min="100" max="100000" step="100" 
+                                           class="input-field">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 보험 설정 -->
+                        <div class="form-section">
+                            <h3 class="text-lg font-semibold text-text-primary mb-4 flex items-center">
+                                <div class="w-2 h-2 bg-orange-500 rounded-full mr-3"></div>
+                                보험 설정
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="input-group">
+                                    <label class="block text-sm font-medium text-text-secondary mb-2">트리거 임계값 (%)</label>
+                                    <input type="number" id="trigger-threshold" value="10" min="1" max="50" step="1" 
+                                           class="input-field">
+                                </div>
+                                <div class="input-group">
+                                    <label class="block text-sm font-medium text-text-secondary mb-2">보험료율 (%)</label>
+                                    <input type="number" id="insurance-premium" value="0.6" min="0.1" max="10" step="0.1" 
+                                           class="input-field">
+                                </div>
+                                <div class="input-group">
+                                    <label class="block text-sm font-medium text-text-secondary mb-2">보험금 지급액 (원)</label>
+                                    <input type="number" id="payout-amount" value="10000000" min="100000" step="100000" 
+                                           class="input-field">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 실행 버튼 -->
+                        <button type="submit" id="run-simulation" 
+                                class="btn-primary w-full">
+                            <span class="flex items-center justify-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1m6-6V7a2 2 0 00-2-2H5a2 2 0 00-2 2v3m2 0V7h10v3M7 21h10a2 2 0 002-2v-5a2 2 0 00-2-2H7a2 2 0 00-2 2v5a2 2 0 002 2z"></path>
+                                </svg>
+                                시뮬레이션 실행
+                            </span>
+                        </button>
+
+                        <!-- 제어 버튼들 -->
+                        <div id="simulation-controls" class="flex space-x-2 hidden">
+                            <button type="button" id="pause-simulation" class="btn-secondary flex-1">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6"></path>
+                                </svg>
+                                일시정지
+                            </button>
+                            <button type="button" id="cancel-simulation" class="btn-danger flex-1">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                                취소
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- 진행 상태 -->
+                    <div id="progress-container" class="px-6 pb-6 hidden">
+                        <div class="bg-dark-elevated rounded-lg p-4 border border-dark-border">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-sm font-medium text-text-secondary">진행률</span>
+                                <span id="progress-text" class="text-sm font-medium text-blue-400">0%</span>
+                            </div>
+                            <div class="bg-dark-bg rounded-full h-3 mb-3">
+                                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                            <div class="space-y-2">
+                                <p id="progress-stage" class="text-xs text-text-muted">시뮬레이션 준비 중...</p>
+                                <p id="time-remaining" class="text-xs text-text-muted"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 결과 표시 패널 -->
+            <div class="xl:col-span-3">
+                <!-- 통계 요약 -->
+                <div id="statistics-panel" class="bg-dark-surface rounded-xl shadow-2xl border border-dark-border p-6 mb-8 hidden">
+                    <h2 class="text-2xl font-semibold mb-6 text-text-primary">시뮬레이션 결과 요약</h2>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="stat-card bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-sm font-medium text-blue-400">평균 최종 주가</h3>
+                                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                </svg>
+                            </div>
+                            <p id="avg-final-price" class="text-2xl font-bold text-blue-300">-</p>
+                        </div>
+                        <div class="stat-card bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/20">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-sm font-medium text-green-400">보험금 지급 확률</h3>
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <p id="payout-probability" class="text-2xl font-bold text-green-300">-</p>
+                        </div>
+                        <div class="stat-card bg-gradient-to-br from-orange-500/10 to-orange-600/10 border border-orange-500/20">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-sm font-medium text-orange-400">평균 보험금</h3>
+                                <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                </svg>
+                            </div>
+                            <p id="avg-payout" class="text-2xl font-bold text-orange-300">-</p>
+                        </div>
+                        <div class="stat-card bg-gradient-to-br from-red-500/10 to-red-600/10 border border-red-500/20">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-sm font-medium text-red-400">95% VaR</h3>
+                                <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                </svg>
+                            </div>
+                            <p id="var-95" class="text-2xl font-bold text-red-300">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 차트 영역 -->
+                <div id="results-container" class="hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                        <!-- 주가 분포 차트 -->
+                        <div id="price-distribution-chart-container" class="chart-card bg-dark-surface rounded-xl shadow-2xl border border-dark-border overflow-hidden">
+                            <div class="bg-gradient-to-r from-blue-600/20 to-purple-600/20 px-6 py-4 border-b border-dark-border">
+                                <h3 class="text-lg font-semibold text-text-primary">주가 분포</h3>
+                                <p class="text-sm text-text-secondary mt-1">최종 주가의 확률 분포</p>
+                            </div>
+                            <div class="p-6">
+                                <div class="chart-container" style="height: 300px;">
+                                    <canvas id="price-distribution-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 보험금 분포 차트 -->
+                        <div id="payout-distribution-chart-container" class="chart-card bg-dark-surface rounded-xl shadow-2xl border border-dark-border overflow-hidden">
+                            <div class="bg-gradient-to-r from-green-600/20 to-blue-600/20 px-6 py-4 border-b border-dark-border">
+                                <h3 class="text-lg font-semibold text-text-primary">보험금 분포</h3>
+                                <p class="text-sm text-text-secondary mt-1">보험금 지급액의 분포</p>
+                            </div>
+                            <div class="p-6">
+                                <div class="chart-container" style="height: 300px;">
+                                    <canvas id="payout-distribution-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- 수익률 분포 차트 -->
+                        <div id="return-distribution-chart-container" class="chart-card bg-dark-surface rounded-xl shadow-2xl border border-dark-border overflow-hidden">
+                            <div class="bg-gradient-to-r from-purple-600/20 to-pink-600/20 px-6 py-4 border-b border-dark-border">
+                                <h3 class="text-lg font-semibold text-text-primary">수익률 분포</h3>
+                                <p class="text-sm text-text-secondary mt-1">투자 수익률의 분포</p>
+                            </div>
+                            <div class="p-6">
+                                <div class="chart-container" style="height: 300px;">
+                                    <canvas id="return-distribution-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 리스크 지표 차트 -->
+                        <div id="risk-metrics-chart-container" class="chart-card bg-dark-surface rounded-xl shadow-2xl border border-dark-border overflow-hidden">
+                            <div class="bg-gradient-to-r from-red-600/20 to-orange-600/20 px-6 py-4 border-b border-dark-border">
+                                <h3 class="text-lg font-semibold text-text-primary">리스크 지표</h3>
+                                <p class="text-sm text-text-secondary mt-1">보험 적용 전후 비교</p>
+                            </div>
+                            <div class="p-6">
+                                <div class="chart-container" style="height: 300px;">
+                                    <canvas id="risk-metrics-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 시계열 차트 -->
+                    <div id="price-paths-chart-container" class="chart-card bg-dark-surface rounded-xl shadow-2xl border border-dark-border overflow-hidden mt-8">
+                        <div class="bg-gradient-to-r from-indigo-600/20 to-cyan-600/20 px-6 py-4 border-b border-dark-border">
+                            <h3 class="text-lg font-semibold text-text-primary">주가 시뮬레이션 경로</h3>
+                            <p class="text-sm text-text-secondary mt-1">대표적인 주가 변동 시나리오</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="chart-container" style="height: 400px;">
+                                <canvas id="price-paths-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 빈 상태 -->
+                <div id="empty-state" class="bg-dark-surface rounded-xl shadow-2xl border border-dark-border p-12 text-center">
+                    <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center">
+                        <svg class="w-12 h-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-text-primary mb-2">시뮬레이션을 시작하세요</h3>
+                    <p class="text-text-secondary mb-6">왼쪽 패널에서 파라미터를 설정하고 시뮬레이션을 실행하여 결과를 확인하세요.</p>
+                    <div class="flex items-center justify-center space-x-4 text-sm text-text-muted">
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                            주가 정보 설정
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                            시뮬레이션 조건
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+                            보험 조건
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 분석 도구 -->
+                <div id="analysis-tools" class="mt-8 bg-dark-surface rounded-xl shadow-2xl border border-dark-border p-6 hidden">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">추가 분석 도구</h3>
+                    <div class="flex flex-wrap gap-4">
+                        <button class="btn-secondary">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            결과 내보내기
+                        </button>
+                        <button class="btn-secondary">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                            </svg>
+                            시나리오 분석
+                        </button>
+                        <button class="btn-secondary">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a4 4 0 01-4-4V5a4 4 0 014-4h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a4 4 0 01-4 4z"></path>
+                            </svg>
+                            상세 보고서
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 모듈 로드 -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
